@@ -23,6 +23,7 @@ use Psr\Log\LoggerAwareInterface;
 class Parser implements LoggerAwareInterface
 {
     private $logger = null;
+    private $has_logger = false;
     
     private $symbols = null;
     
@@ -33,14 +34,36 @@ class Parser implements LoggerAwareInterface
     
     private $has_parsed = false;
     
-    public function __construct()
+    /**
+     * Creates a new Parser instance.
+     *
+     * @access public
+     * @param SymbolTable The symbol table instance to use.
+     */
+    public function __construct(SymbolTable $symbol_table = null)
     {
-        $this->symbols = new SymbolTable();
+        if (null === $symbol_table)
+        {
+            $symbol_table = new SymbolTable();
+        }
+        
+        $this->symbols = $symbol_table;
     }
     
-    public function setLogger(LoggerInterface $logger)
+    final public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+        $this->has_logger = null !== $this->logger;
+    }
+    
+    final protected function hasLogger()
+    {
+        return $this->has_logger;
+    }
+    
+    final protected function getLogger()
+    {
+        return $this->logger;
     }
     
     public function hasParsed()
@@ -105,7 +128,7 @@ class Parser implements LoggerAwareInterface
                     break;
                 
                 default:
-                    if ($this->logger) {
+                    if ($this->hasLogger()) {
                         // TODO: Complete, log unknown token type
                     }
                     break;
@@ -115,17 +138,27 @@ class Parser implements LoggerAwareInterface
         $this->has_parsed = true;
     }
     
+    /**
+     *
+     * @access protected
+     */
     protected function parseFunction()
     {
         // Check to make the function is defined, whether by php or in user land.
         // This method should not parse static class method calls.
     }
     
+    /**
+     *
+     * @access protected
+     * @param array $variable_token The token that represents a variable.
+     */
     protected function parseVariable($variable_token)
     {
         $code_blocks = array($variable_token[1]);
-        
         $var_is_assign = false;
+        
+        // Used to break out of the loop
         $break = false;
         
         // Check $break prior to popping off another token from the beginning
@@ -148,7 +181,10 @@ class Parser implements LoggerAwareInterface
                 case T_VARIABLE:
                     if ($var_is_assign) {
                         if (!$this->symbols->exists($token[1])) {
-                            // TODO: Log error, use of undefined variable.
+                            if ($this->hasLogger()) {
+                                // TODO: Log error, use of undefined variable.
+                            }
+                            
                             // TODO: Compiler error/warning
                         }
                         

@@ -19,6 +19,24 @@ namespace PhpSandbox\Compiler\Tokenizer;
 class Util
 {
     /**
+     *
+     * @return array
+     */
+    public static function resolveTStringToken($token)
+    {
+        switch ($token) {
+            case 'false':
+            case 'true':
+            case 'null':
+            case 'self':
+            case 'parent':
+              
+            default:
+              break;
+        }
+    }
+    
+    /**
      * @ignore
      */
     final private function __construct()

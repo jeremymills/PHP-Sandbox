@@ -7,13 +7,13 @@
  * @license https://github.com/amcgowanca/PHP-Sandbox/blob/master/LICENSE.txt
  */
 
-namespace PhpSandbox\Compiler\Tokenizer;
+namespace PhpSandbox\Compiler\Tokenizer\Token;
 
 /**
  * Base token class used by all specialized tokens and represents a basic token.
  *
  * @author Aaron McGowan <aaron.mcgowan@mcgowancorp.com>
- * @package PhpSandbox.Compiler.Tokenizer
+ * @package PhpSandbox.Compiler.Tokenizer.Token
  * @version 1.0.0
  */
 class Token

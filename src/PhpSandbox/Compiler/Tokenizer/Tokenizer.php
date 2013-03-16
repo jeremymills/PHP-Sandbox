@@ -9,8 +9,8 @@
 
 namespace PhpSandbox\Compiler\Tokenizer;
 
-use PhpSandbox\Compiler\Tokenizer\Token;
-use PhpSandbox\Compiler\Tokenizer\Tokens;
+use PhpSandbox\Compiler\Tokenizer\Token\Token;
+use PhpSandbox\Compiler\Tokenizer\Token\Tokens;
 use PhpSandbox\Compiler\Tokenizer\Exception;
 use PhpSandbox\Compiler\Tokenizer\Util as TokenUtility;
 

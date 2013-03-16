@@ -7,9 +7,9 @@
  * @license https://github.com/amcgowanca/PHP-Sandbox/blob/master/LICENSE.txt
  */
 
-namespace PhpSandbox\Compiler\Tokenizer;
+namespace PhpSandbox\Compiler\Tokenizer\Token;
 
-use PhpSandbox\Compiler\Tokenizer\Token;
+use PhpSandbox\Compiler\Tokenizer\Token\Token;
 
 /**
  * A collection used for representing a set of Token instances.
@@ -25,10 +25,15 @@ class Tokens implements \Countable
      */
     private $tokens = array();
     
-    /**s
+    /**
      * @var int The number of tokens within the collection.
      */
     private $count = 0;
+    
+    /**
+     * @var string The string representation of the tokens.
+     */
+    private $as_string = '';
     
     /**
      * Creates a new instance of Tokens.
@@ -62,7 +67,7 @@ class Tokens implements \Countable
     }
     
     /**
-     *
+     * Adds a new token onto the end of the list.
      *
      * @access public
      * @param Token $token The token instance to add to the list.
@@ -71,6 +76,7 @@ class Tokens implements \Countable
     {
         $this->tokens[] = $token;
         $this->count++;
+        $this->as_string = null;
     }
     
     /**
@@ -87,23 +93,36 @@ class Tokens implements \Countable
         
         $token = array_pop($this->tokens);
         $this->count--;
+        $this->as_string = null;
         
         return $token;
     }
     
+    /**
+     * Returns a string representation of all tokens.
+     *
+     * @access public
+     * @return string
+     */
     final public function __toString()
     {
         return $this->toString();
     }
     
+    /**
+     * Returns a string representation of all tokens.
+     *
+     * @access public
+     * @return string
+     */
     public function toString()
     {
-        // TODO: This needs to be optimized!
-        $string = '';
-        for ($i = 0; $i < $this->count; ++$i) {
-            $string .= $this->tokens[$i]->toString();
+        if (null === $this->as_string) {
+            foreach ($this->tokens as $k => &$token) {
+                $this->as_string .= $token->toString();
+            }
         }
         
-        return $string;
+        return $this->as_string;
     }
 }

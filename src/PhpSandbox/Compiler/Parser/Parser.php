@@ -9,8 +9,13 @@
 
 namespace PhpSandbox\Compiler\Parser;
 
-use PhpSandbox\Compiler\Symbol;
-use PhpSandbox\Compiler\SymbolTable;
+use PhpSandbox\Compiler\Symbols\ValueSymbol;
+use PhpSandbox\Compiler\Symbols\SymbolTable;
+
+use PhpSandbox\Compiler\Tokenizer\Token;
+use PhpSandbox\Compiler\Tokenizer\Tokens;
+use PhpSandbox\Compiler\Tokenizer\Tokenizer;
+
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 
@@ -48,6 +53,7 @@ class Parser implements LoggerAwareInterface
         }
         
         $this->symbols = $symbol_table;
+        
     }
     
     final public function setLogger(LoggerInterface $logger)
@@ -76,15 +82,28 @@ class Parser implements LoggerAwareInterface
         return $this->code_blocks;
     }
     
+    /**
+     *
+     * @access public
+     * @param string $input
+     */
     public function parse($input)
     {
         if ($this->hasParsed()) {
             return;
         }
         
-        $this->tokens = @token_get_all($input);
-        $this->tokens_count = count($this->tokens);
+        $tokenizer = new Tokenizer($input);
+        $this->tokens = $tokenizer->getTokens();
         
+        if (0 === $this->tokens->count()) {
+            return;
+        }
+        
+        
+        
+        
+        /* 
         $this->code_blocks = array();
         
         while ($token = array_shift($this->tokens)) {
@@ -102,7 +121,8 @@ class Parser implements LoggerAwareInterface
                     break;
                 
                 case T_VARIABLE:
-                    $this->parseVariable($token);
+                    $variable_blocks =  $this->parseVariable($token);
+                    $this->mergeCodeBlocks($variable_blocks);
                     break;
                 
                 case T_PRINT:
@@ -114,8 +134,9 @@ class Parser implements LoggerAwareInterface
                     $this->code_blocks[] = $token[1];
                     break;
                 
-                case T_VARIABLE:
-                    $this->parseVariable($token);
+                case T_FUNCTION:
+                    $function_blocks = $this->parseFunction($token);
+                    $this->mergeCodeBlocks($function_blocks);
                     break;
                 
                 case ';': // T_SEMICOLON?
@@ -133,19 +154,79 @@ class Parser implements LoggerAwareInterface
                     }
                     break;
             }
-        }
+        } */
         
         $this->has_parsed = true;
+    }
+    
+    protected function mergeCodeBlocks(array &$code_blocks) {
+        for ($i = 0; $i < count($code_blocks); ++$i) {
+            $this->code_blocks[] = $code_blocks[$i];
+        }
     }
     
     /**
      *
      * @access protected
      */
-    protected function parseFunction()
+    protected function parseFunction($function_token)
     {
         // Check to make the function is defined, whether by php or in user land.
         // This method should not parse static class method calls.
+        
+        /* $code_blocks = array($function_token[1]);
+        
+        $break = false;
+        
+        while (!$break && ($token = array_shift($this->tokens))) {
+            
+            switch ($token[0]) {
+                case T_WHITESPACE:
+                    $code_blocks[] = $token[1];
+                    break;
+                
+                case T_STRING:
+                    $code_blocks[] = $token[1];
+                    break;
+                
+                case T_PRINT:
+                case T_ECHO:
+                    $code_blocks[] = $token[1];
+                    break;
+                
+                case T_VARIABLE:
+                    $variable_blocks = $this->parseVariable($token);
+                    $this->mergeCodeBlocks($variable_blocks);
+                    break;
+                
+                case T_CONSTANT_ENCAPSED_STRING:
+                    $code_blocks[] = $token[1];
+                    break;
+                
+                case '(':
+                    $code_blocks[] = $token[0];
+                    break;
+                
+                case ')':
+                    $code_blocks[] = $token[0];
+                    break;
+                
+                case '{':
+                    $code_blocks[] = $token[0];
+                    break;
+                
+                case '}':
+                    $code_blocks[] = $token[0];
+                    $break = true;
+                    break;
+                
+                case ';':
+                    $code_blocks[] = $token[0];
+                    break;
+            }
+        }
+        
+        return $code_blocks; */
     }
     
     /**
@@ -155,7 +236,7 @@ class Parser implements LoggerAwareInterface
      */
     protected function parseVariable($variable_token)
     {
-        $code_blocks = array($variable_token[1]);
+        /* $code_blocks = array($variable_token[1]);
         $var_is_assign = false;
         
         // Used to break out of the loop
@@ -172,9 +253,9 @@ class Parser implements LoggerAwareInterface
                     break;
                 
                 case T_CONSTANT_ENCAPSED_STRING:
+                    $code_blocks[] = $token[1];
                     if ($var_is_assign) {
-                        $code_blocks[] = $token[1];
-                        $this->symbols->set(new Symbol(Symbol::TYPE_VARIABLE, $variable_token[1], $token[1]));
+                        $this->symbols->set(new ValueSymbol($variable_token[1], $token[1]));
                     }
                     break;
                 
@@ -189,14 +270,16 @@ class Parser implements LoggerAwareInterface
                         }
                         
                         $code_blocks[] = $token[1];
-                        $this->symbols->set(new Symbol(Symbol::TYPE_VARIABLE, $variable_token[1], $token[1]));
+                        $this->symbols->set(new ValueSymbol($variable_token[1], $token[1]));
                     }
                     break;
                 
                 case '(':
+                    $code_blocks[] = '(';
                     break;
                 
                 case ')':
+                    $code_blocks[] = ')';
                     break;
                 
                 case '=':
@@ -210,11 +293,8 @@ class Parser implements LoggerAwareInterface
                     $break = true;
                     break;
             }
-        }
+        } // end while (...)
         
-        // Iterate over create code blocks and populate the base.
-        for ($i = 0, $size = count($code_blocks); $i < $size; $i++) {
-            $this->code_blocks[] = $code_blocks[$i];
-        }
+        return $code_blocks; */
     }
 }

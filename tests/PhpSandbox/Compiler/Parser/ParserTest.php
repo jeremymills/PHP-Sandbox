@@ -60,7 +60,12 @@ class ParserTest extends PHPUnit_Framework_TestCase
     
     public function testParseFunctions()
     {
+        $parser = new Parser();
+        $parser->parse('<?php function foo() { print "Hello World"; } ?>');
+        $code_blocks = $parser->getCodeBlocks();
+        $this->assertEquals('<?php function foo() { print "Hello World"; } ?>', implode('', $code_blocks));
         
+        // print_r( $code_blocks );
     }
     
     public function testTokensGetAll() {

@@ -29,12 +29,7 @@ class Exception extends \Exception
      */
     public function __contruct($message = null, $code = 0, Exception $previous = null)
     {
-        if (null !== $message) {
-            $this->message = $message;
-        }
-        $this->log($message, $code, $previous);
-
-	parent::__construct($message, $code, $previous);
+        parent::__construct($message, $code, $previous);
     }
     
     /**
@@ -47,6 +42,6 @@ class Exception extends \Exception
      */
     public function log($message, $code, &$previous)
     {
-	//TODO: Complete
+        //TODO: Complete
     }
 }

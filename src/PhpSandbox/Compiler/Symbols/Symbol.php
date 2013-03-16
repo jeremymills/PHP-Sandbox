@@ -7,71 +7,51 @@
  * @license https://github.com/amcgowanca/PHP-Sandbox/blob/master/LICENSE.txt
  */
 
-namespace PhpSandbox\Compiler;
+namespace PhpSandbox\Compiler\Symbols;
 
 /**
  *
  * @author Aaron McGowan <aaron.mcgowan@mcgowancorp.com>
- * @package PhpSandbox.Compiler
+ * @package PhpSandbox.Compiler.Symbol
  * @version 1.0.0
  */
-class Symbol
+abstract class Symbol
 {
-    const TYPE_VARIABLE = 1;
-  
-    /**
-     * @var int
-     */
-    private $type;
-    
     /**
      * @var string 
      */
     private $name;
     
     /**
-     * @var mixed
-     */
-    private $value = null;
-    
-    /**
      * Creates a new instance of the symbol class.
      *
      * @access public
      * @param int $type The type of this Symbol.
+     * @param string $name The name of the Symbol.
      */
-    public function __construct($type, $name, $value = null)
+    public function __construct($name)
     {
-        $this->setType($type);
         $this->setName($name);
     }
     
-    public function getType()
-    {
-        return $this->type;
-    }
-    
+    /**
+     * Returns the name of this symbol.
+     *
+     * @access public
+     * @return string Returns the symbol name.
+     */
     public function getName()
     {
         return $this->name;
     }
     
-    public function getValue()
-    {
-        return $this->value;
-    }
-    
-    public function setValue($value)
-    {
-        $this->value = $value;
-    }
-    
-    protected function setType($type)
-    {
-        $this->type = $type;
-    }
-    
-    protected function setName($name)
+    /**
+     * Sets the name of this symbol.
+     *
+     * @access public
+     * @param string $name The name of the symbol.
+     */
+    final protected function setName($name)
     {
         $this->name = $name;
     }

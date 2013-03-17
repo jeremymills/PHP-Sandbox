@@ -15,10 +15,10 @@ use PhpSandbox\Compiler\Tokenizer\Token\Token;
  * A collection used for representing a set of Token instances.
  *
  * @author Aaron McGowan <aaron.mcgowan@mcgowancorp.com>
- * @package PhpSandbox.Compiler.Tokenizer
+ * @package PhpSandbox.Compiler.Tokenizer.Token
  * @version 0.0.1
  */
-class Tokens implements \Countable
+class Tokens implements \Countable, \ArrayAccess
 {
     /**
      * @var array The internal storage of token instances.
@@ -45,6 +45,47 @@ class Tokens implements \Countable
     }
     
     /**
+     * Returns the number of tokens within this list.
+     *
+     * @access public
+     * @return int Returns the total count.
+     */
+    public function getCount()
+    {
+        return $this->count;
+    }
+    
+    /**
+     * Returns the first token within the list.
+     *
+     * @access public
+     * @return Token Returns the first token if the list is not empty, otherwise null.
+     */
+    public function getFirst()
+    {
+        if ($this->isEmpty()) {
+            return null;
+        }
+        
+        return $this->tokens[0];
+    }
+    
+    /**
+     * Returns the last token within the list.
+     *
+     * @access public
+     * @return Token Returns the last token if the list not empty, otherwise null.
+     */
+    public function getLast()
+    {
+        if ($this->isEmpty()) {
+            return null;
+        }
+        
+        return $this->tokens[$this->count - 1];
+    }
+    
+    /**
      * Returns the number of tokens.
      *
      * @access public
@@ -52,7 +93,7 @@ class Tokens implements \Countable
      */
     public function count()
     {
-        return $this->count;
+        return $this->getCount();
     }
     
     /**
@@ -64,6 +105,31 @@ class Tokens implements \Countable
     public function isEmpty()
     {
         return 0 === $this->count();
+    }
+    
+    /**
+     * Adds a new token onto the end of the list.
+     *
+     * Alias of push().
+     *
+     * @access public
+     * @param Token $token The token to add to the list.
+     */
+    public function add(Token $token)
+    {
+        return $this->push($token);
+    }
+    
+    /**
+     * Returns if boolean to indicate whether or not the specified index exists.
+     *
+     * @access public
+     * @param int $index The index of the token to test whether it exists.
+     * @return bool Returns true if the index exists, otherwise false.
+     */
+    public function containsKey($index)
+    {
+        return isset($this->tokens[$index]);
     }
     
     /**
@@ -99,6 +165,26 @@ class Tokens implements \Countable
     }
     
     /**
+     * Removes a token at the specified index.
+     *
+     * @access public
+     * @param int $index The index of the token to remove.
+     * @return bool Returns true if the token has been successfully removed, otherwise false.
+     */
+    public function removeAt($index)
+    {
+        if (isset($this->tokens[$index]))
+        {
+            unset($this->tokens[$index]);
+            $this->count--;
+            $this->as_string = null;
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * Returns a string representation of all tokens.
      *
      * @access public
@@ -124,5 +210,34 @@ class Tokens implements \Countable
         }
         
         return $this->as_string;
+    }
+    
+    public function offsetGet($index)
+    {
+        return $this->get($index);
+    }
+    
+    public function offsetSet($index, $token)
+    {
+        if (!($token instanceof Token)) {
+            throw new Exception('Values must be of type Token.');
+        }
+        
+        if (!isset($this->tokens[$index])) {
+            $this->count++;
+        }
+        
+        $this->tokens[$index] = $token;
+        $this->as_string = null;
+    }
+    
+    public function offsetExists($index)
+    {
+        return $this->containsKey($index);
+    }
+    
+    public function offsetUnset($index)
+    {
+        return $this->removeAt($index);
     }
 }

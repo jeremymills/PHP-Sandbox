@@ -126,7 +126,7 @@ class Tokenizer
                 // Create new token object
                 $token = new Token(
                     $tokens[$token_iter][0],
-                    token_name($tokens[$token_iter][0]),
+                    Token::name($tokens[$token_iter][0]),
                     isset($tokens[$token_iter][1]) ? $tokens[$token_iter][1] : null
                 );
                 

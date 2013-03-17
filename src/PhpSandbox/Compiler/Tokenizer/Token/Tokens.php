@@ -212,11 +212,26 @@ class Tokens implements \Countable, \ArrayAccess
         return $this->as_string;
     }
     
+    /**
+     * Access a single token using array notation.
+     *
+     * @access public
+     * @param int $index The index of the token to get.
+     * @return Token Returns the toke instance at $index if it exists, otherwise null.
+     */
     public function offsetGet($index)
     {
         return $this->get($index);
     }
     
+    /**
+     * Mutates the value at $index using array notation.
+     *
+     * @access public
+     * @param int $index The index to mutate.
+     * @param Token $token The token instance.
+     * @throws Exception Thrown if the $token is not of type Token.
+     */
     public function offsetSet($index, $token)
     {
         if (!($token instanceof Token)) {
@@ -231,11 +246,25 @@ class Tokens implements \Countable, \ArrayAccess
         $this->as_string = null;
     }
     
+    /**
+     * Returns a boolean to indicate whether or not the index exists.
+     *
+     * @access public
+     * @param int $index The index of the token.
+     * @return bool Returns true if the index exists, otherwise returns false.
+     */
     public function offsetExists($index)
     {
         return $this->containsKey($index);
     }
     
+    /**
+     * Removes a specified token by its index.
+     *
+     * @access public
+     * @param int $index The index of the token to remove.
+     * @return bool Returns true if the token was removed, otherwise false.
+     */
     public function offsetUnset($index)
     {
         return $this->removeAt($index);

@@ -323,23 +323,23 @@ class Logger implements LoggerInterface, LoggerAwareInterface
 
         switch ($level) {
             case self::EMERGENCY:
-                return "$time - [EMERGENCY] :";
+                return "$time - [EMERGENCY] : ";
             case self::ALERT:
-                return "$time - [ALERT] :";
+                return "$time - [ALERT] : ";
             case self::CRITICAL:
-                return "$time - [CRITICAL] :";
+                return "$time - [CRITICAL] : ";
             case self::NOTICE:
-                return "$time - [NOTICE] :";
+                return "$time - [NOTICE] : ";
             case self::INFO:
-                return "$time - [INFO] :";
+                return "$time - [INFO] : ";
             case self::WARNING:
-                return "$time - [WARNING] :";
+                return "$time - [WARNING] : ";
             case self::DEBUG:
-                return "$time - [DEBUG] :";
+                return "$time - [DEBUG] : ";
             case self::ERROR:
-                return "$time - [ERROR] :";
+                return "$time - [ERROR] : ";
             default:
-                return "$time - [LOG] :";
+                return "$time - [LOG] : ";
         }
     }
 }

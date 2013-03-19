@@ -101,12 +101,13 @@ class Logger implements LoggerInterface, LoggerAwareInterface
         
         if (file_exists($this->_logFile) && !is_writable($this->_logFile)) {
             $this->_messages[] = $this->_default_messages['WriteFail'];
-            return;
+            throw new Exception($this->_default_message['WriteFail']);
         }
         if (($this->_fileStatus = fopen($this->_logFile, 'a'))) {
             $this->_messages[] = $this->_default_message['OpenSuccess'];
         } else {
             $this->_messages[] = $this->_default_message['OpenFail'];
+            throw new Exception($this->_default_message['OpenFail']);
         }
     }
     
@@ -256,6 +257,7 @@ class Logger implements LoggerInterface, LoggerAwareInterface
         // Write to the log file, will write to file if !== false
         if (fwrite($this->_fileStatus, $input) === false) {
             $this->_messages[] = $this->_default_message['WriteFail'];
+            throw new Exception($this->_default_message['WriteFail']);
         }
     }
     
